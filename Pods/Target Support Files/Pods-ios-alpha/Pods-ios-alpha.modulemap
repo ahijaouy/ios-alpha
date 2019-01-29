@@ -1,0 +1,6 @@
+framework module Pods_ios_alpha {
+  umbrella header "Pods-ios-alpha-umbrella.h"
+
+  export *
+  module * { export * }
+}
