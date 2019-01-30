@@ -7,6 +7,7 @@ target 'ios-alpha' do
 
   # Pods for ios-alpha
   pod 'Firebase/Core'
+  pod 'Firebase/Firestore'
 
   target 'ios-alphaTests' do
     inherit! :search_paths
