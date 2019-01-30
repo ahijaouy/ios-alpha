@@ -15,7 +15,6 @@ class ViewController: UIViewController, UITableViewDataSource  {
     let upperBound = 100
     var numberToGuess: Int!
     var numberOfGuesses = 0
-    var leaders = ["Andre", "Devany", "Vinu", "Rhea", "Alex"]
     var db: Firestore!
     var leaderboardRef: CollectionReference!
     var data: [String] = []
@@ -27,34 +26,20 @@ class ViewController: UIViewController, UITableViewDataSource  {
     override func viewDidLoad() {
         super.viewDidLoad()
         generateRandomNumber()
-        
+        tableView.dataSource = self
         initFirebase()
         loadLeaderboard()
-        
-//        for i in 0...5 {
-//            data.append("\(i)")
-//        }
-        
-        tableView.dataSource = self
-        
     }
-    
-//    override func viewDidAppear(_ animated: Bool) {
-//        tableView.reloadData()
-//    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return data.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cellReuseIdentifier")! //1.
-        
-        let text = data[indexPath.row] //2.
-        
-        cell.textLabel?.text = text //3.
-        
-        return cell //4.
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cellReuseIdentifier")!
+        let text = data[indexPath.row]
+        cell.textLabel?.text = text
+        return cell
     }
     
     func initFirebase() {
@@ -75,17 +60,11 @@ class ViewController: UIViewController, UITableViewDataSource  {
                     print("\(document.documentID) => \(document.data())")
                     let nickname = document.data()["nickname"]!
                     let score = document.data()["score"]!
-//                    self.data.append("temp")
                     self.data.append("\(nickname): \(score)")
                 }
-                print(self.data)
-                
+                self.tableView.reloadData()
             }
         }
-        
-//        tableView.reloadData()
-        
-        
     }
     
     // Make an API call to create a new entry in leader board
@@ -100,7 +79,7 @@ class ViewController: UIViewController, UITableViewDataSource  {
             } else {
                 print("Document added with ID: \(ref!.documentID)")
             }
-            
+            self.loadLeaderboard()
         }
     }
     
