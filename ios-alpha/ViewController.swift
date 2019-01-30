@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 
 
-class ViewController: UIViewController  {
+class ViewController: UIViewController, UITableViewDataSource  {
     let lowerBound = 1
     let upperBound = 100
     var numberToGuess: Int!
@@ -18,9 +18,11 @@ class ViewController: UIViewController  {
     var leaders = ["Andre", "Devany", "Vinu", "Rhea", "Alex"]
     var db: Firestore!
     var leaderboardRef: CollectionReference!
+    var data: [String] = []
     
     @IBOutlet weak var mylabel: UILabel!
     @IBOutlet weak var myfield: UITextField!
+    @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +31,30 @@ class ViewController: UIViewController  {
         initFirebase()
         loadLeaderboard()
         
+//        for i in 0...5 {
+//            data.append("\(i)")
+//        }
+        
+        tableView.dataSource = self
+        
+    }
+    
+//    override func viewDidAppear(_ animated: Bool) {
+//        tableView.reloadData()
+//    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return data.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cellReuseIdentifier")! //1.
+        
+        let text = data[indexPath.row] //2.
+        
+        cell.textLabel?.text = text //3.
+        
+        return cell //4.
     }
     
     func initFirebase() {
@@ -39,16 +65,25 @@ class ViewController: UIViewController  {
     
     func loadLeaderboard() {
         leaderboardRef = db.collection("leaderboard")
-        db.collection("leaderboard").order(by: "score").limit(to: 5).getDocuments() {
+        leaderboardRef.order(by: "score").limit(to: 5).getDocuments() {
             (querySnapshot, err) in
             if let err = err {
                 print("Error getting documents: \(err)")
             } else {
+                
                 for document in querySnapshot!.documents {
                     print("\(document.documentID) => \(document.data())")
+                    let nickname = document.data()["nickname"]!
+                    let score = document.data()["score"]!
+//                    self.data.append("temp")
+                    self.data.append("\(nickname): \(score)")
                 }
+                print(self.data)
+                
             }
         }
+        
+//        tableView.reloadData()
         
         
     }
